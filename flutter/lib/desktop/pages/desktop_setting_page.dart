@@ -70,14 +70,14 @@ class DesktopSettingPage extends StatefulWidget {
         bind.mainGetBuildinOption(key: kOptionHideSecuritySetting) != 'Y')
       SettingsTabKey.safety,
     if (!bind.isDisableSettings() &&
-        bind.mainGetBuildinOption(key: kOptionHideNetworkSetting) != 'Y')
+        bind.mainGetHardOption(key: kOptionHideNetworkSetting) != 'Y')
       SettingsTabKey.network,
     if (!bind.isIncomingOnly()) SettingsTabKey.display,
     if (!isWeb && !bind.isIncomingOnly() && bind.pluginFeatureIsEnabled())
       SettingsTabKey.plugin,
     if (!bind.isDisableAccount()) SettingsTabKey.account,
     if (isWindows &&
-        bind.mainGetBuildinOption(key: kOptionHideRemotePrinterSetting) != 'Y')
+        bind.mainGetHardOption(key: kOptionHideRemotePrinterSetting) != 'Y')
       SettingsTabKey.printer,
     SettingsTabKey.about,
   ];
@@ -458,16 +458,15 @@ class _GeneralState extends State<_General> {
     }
 
     return _Card(title: 'Service', children: [
-      Obx(() => _Button(serviceStop.value ? 'Start' : 'Stop', () {
-            () async {
-              serviceBtnEnabled.value = false;
-              await start_service(serviceStop.value);
-              // enable the button after 1 second
-              Future.delayed(const Duration(seconds: 1), () {
-                serviceBtnEnabled.value = true;
-              });
-            }();
-          }, enabled: serviceBtnEnabled.value))
+      _Button('安裝', () async {
+        serviceBtnEnabled.value = false;
+        // 執行安裝守護程序的功能
+        bind.mainIsInstalledDaemon(prompt: true);
+        // enable the button after 1 second
+        Future.delayed(const Duration(seconds: 1), () {
+          serviceBtnEnabled.value = true;
+        });
+      }, enabled: serviceBtnEnabled.value)
     ]);
   }
 
