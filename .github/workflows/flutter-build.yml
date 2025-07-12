@@ -140,33 +140,54 @@ jobs:
         with:
           vcpkgDirectory: C:\vcpkg
           vcpkgGitCommitId: ${{ env.VCPKG_COMMIT_ID }}
-          doNotCache: false
+          doNotCache: true  # 暫時禁用緩存以避免服務問題
 
       - name: Install vcpkg dependencies
         env:
           VCPKG_DEFAULT_HOST_TRIPLET: ${{ matrix.job.vcpkg-triplet }}
         run: |
-          if ! $VCPKG_ROOT/vcpkg \
-            install \
-            --triplet ${{ matrix.job.vcpkg-triplet }} \
-            --x-install-root="$VCPKG_ROOT/installed"; then
-            find "${VCPKG_ROOT}/" -name "*.log" | while read -r _1; do
-              echo "$_1:"
-              echo "======"
-              cat "$_1"
-              echo "======"
-              echo ""
-            done
-            exit 1
-          fi
+          # 添加重試機制
+          $maxAttempts = 3
+          $attempt = 1
+          
+          while ($attempt -le $maxAttempts) {
+            try {
+              if (! $VCPKG_ROOT/vcpkg install --triplet ${{ matrix.job.vcpkg-triplet }} --x-install-root="$VCPKG_ROOT/installed") {
+                throw "vcpkg install failed"
+              }
+              break
+            } catch {
+              Write-Host "Attempt $attempt failed: $_"
+              if ($attempt -eq $maxAttempts) {
+                # 顯示詳細錯誤日誌
+                Get-ChildItem "${VCPKG_ROOT}/" -Name "*.log" -Recurse | ForEach-Object {
+                  Write-Host "$_:"
+                  Write-Host "======"
+                  Get-Content "$_"
+                  Write-Host "======"
+                }
+                exit 1
+              }
+              $attempt++
+              Start-Sleep -Seconds 30
+            }
+          }
           head -n 100 "${VCPKG_ROOT}/buildtrees/ffmpeg/build-${{ matrix.job.vcpkg-triplet }}-rel-out.log" || true
-        shell: bash
+        shell: pwsh
 
       - name: Build rustdesk
         run: |
           # Windows: build RustDesk
           python3 .\build.py --portable --hwcodec --flutter --vram --skip-portable-pack
-          mv ./flutter/build/windows/x64/runner/Release ./rustdesk
+          
+          # 檢查構建輸出是否存在
+          if (Test-Path "./flutter/build/windows/x64/runner/Release") {
+            mv ./flutter/build/windows/x64/runner/Release ./rustdesk
+          } else {
+            Write-Error "Flutter build output directory not found"
+            Get-ChildItem -Path "./flutter/build" -Recurse
+            exit 1
+          }
 
           # Download usbmmidd_v2.zip and extract it to ./rustdesk
           Invoke-WebRequest -Uri https://github.com/rustdesk-org/rdev/releases/download/usbmmidd_v2/usbmmidd_v2.zip -OutFile usbmmidd_v2.zip
