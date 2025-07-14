@@ -152,6 +152,23 @@ class _PeerTabPageState extends State<PeerTabPage>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+                      // 兩張圖片並排
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/lishin-logo12.png',
+                  width: 115,  // 縮小一點，兩張放一起才不會太大
+                  height: 130,
+                ),
+                SizedBox(width: 20), // 兩張圖片間距
+                Image.asset(
+                  'assets/lc-logo2.png',
+                  width: 115,
+                  height: 130,
+                ),
+              ],
+            ),
             // 第一排文字 - 大字體
             Text(
               '此版本僅提供被控端功能',
@@ -635,7 +652,7 @@ class _PeerTabPageState extends State<PeerTabPage>
 
   Widget _buildConnStatusMsg() {
     final _svcStopped = Get.find<RxBool>(tag: 'stop-service');
-    final em = 14.0;
+    final em = 20.0;
     
     return Obx(() => Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -643,10 +660,10 @@ class _PeerTabPageState extends State<PeerTabPage>
       children: [
         // 狀態燈
         Container(
-          height: 8,
-          width: 8,
+          height: 12,
+          width: 12,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(6),
             color: _svcStopped.value ||
                     stateGlobal.svcStatus.value == SvcStatus.connecting
                 ? kColorWarn
