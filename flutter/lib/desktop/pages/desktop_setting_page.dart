@@ -458,29 +458,16 @@ class _GeneralState extends State<_General> {
     }
 
     return _Card(title: 'Service', children: [
-      Obx(() {
-        if (!bind.mainIsInstalled()) {
-          return _Button('Install', () async {
-            serviceBtnEnabled.value = false;
-            await rustDeskWinManager.closeAllSubWindows();
-            bind.mainGotoInstall();
-            Future.delayed(const Duration(seconds: 1), () {
-              serviceBtnEnabled.value = true;
-            });
-          }, enabled: serviceBtnEnabled.value);
-        } else if (bind.mainIsInstalledLowerVersion()) {
-          return _Button('Click to upgrade', () async {
-            serviceBtnEnabled.value = false;
-            await rustDeskWinManager.closeAllSubWindows();
-            bind.mainUpdateMe();
-            Future.delayed(const Duration(seconds: 1), () {
-              serviceBtnEnabled.value = true;
-            });
-          }, enabled: serviceBtnEnabled.value);
-        } else {
-          return _Button('Installed', () {}, enabled: false);
-        }
-      })
+      Obx(() => _Button('Install', () {
+            () async {
+              serviceBtnEnabled.value = false;
+              await bind.mainInstall();
+              // enable the button after 1 second
+              Future.delayed(const Duration(seconds: 1), () {
+                serviceBtnEnabled.value = true;
+              });
+            }();
+          }, enabled: serviceBtnEnabled.value))
     ]);
   }
 
