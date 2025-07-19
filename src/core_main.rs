@@ -117,8 +117,8 @@ pub fn core_main() -> Option<Vec<String>> {
     }
     let click_setup = cfg!(windows) && args.is_empty() && crate::common::is_setup(&arg_exe);
     if click_setup && !config::is_disable_installation() {
-        args.push("--install".to_owned());
-        flutter_args.push("--install".to_string());
+        args.push("--silent-install".to_owned());
+        flutter_args.push("--silent-install".to_string());
     }
     if args.contains(&"--noinstall".to_string()) {
         args.clear();
