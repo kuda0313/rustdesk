@@ -118,7 +118,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   }
   bool is_install_page = false;
   auto installParam = std::string("--install");
-  if (!command_line_arguments.empty() && command_line_arguments.front().compare(0, installParam.size(), installParam.c_str()) == 0) {
+  auto silentInstallParam = std::string("--silent-install");
+  if (!command_line_arguments.empty() && 
+      (command_line_arguments.front().compare(0, installParam.size(), installParam.c_str()) == 0 ||
+       command_line_arguments.front().compare(0, silentInstallParam.size(), silentInstallParam.c_str()) == 0)) {
+    // 如果是 --silent-install，直接退出不啟動 Flutter UI
+    if (command_line_arguments.front().compare(0, silentInstallParam.size(), silentInstallParam.c_str()) == 0) {
+      return EXIT_SUCCESS;
+    }
     is_install_page = true;
   }
 

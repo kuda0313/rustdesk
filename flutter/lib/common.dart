@@ -1556,19 +1556,21 @@ String translate(String name) {
 // rust: libs/hbb_common/src/config.rs -> option2bool()
 // sciter: Does not have the function, but it should be kept the same.
 bool option2bool(String option, String value) {
-  bool res;
+  // 為 allow-numeric-one-time-password 添加特殊處理
+  if (option == kOptionAllowNumericOneTimePassword && value.isEmpty) {
+    return true; // 默認為 true
+  }
+  
   if (option.startsWith("enable-")) {
-    res = value != "N";
+    return value != "N";
   } else if (option.startsWith("allow-") ||
       option == kOptionStopService ||
       option == kOptionDirectServer ||
       option == kOptionForceAlwaysRelay) {
-    res = value == "Y";
+    return value == "Y";
   } else {
-    assert(false);
-    res = value != "N";
+    return value != "N";
   }
-  return res;
 }
 
 String bool2option(String option, bool b) {
