@@ -158,7 +158,11 @@ class _DesktopSettingPageState extends State<DesktopSettingPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // 立即执行一次，然后每30秒执行一次
-    _canBeBlocked.value = canBeBlocked();
+    canBeBlocked().then((value) {
+      if (mounted) {
+        _canBeBlocked.value = value;
+      }
+    });
     _videoConnTimer = Timer.periodic(Duration(seconds: 30), (_) async {
       if (!mounted) {
         return;
