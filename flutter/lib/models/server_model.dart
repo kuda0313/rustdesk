@@ -183,7 +183,8 @@ class ServerModel with ChangeNotifier {
           await timerCallback();
         }
       });
-      Timer.periodic(Duration(milliseconds: 500), (timer) async {
+      // 增加检查间隔，从500毫秒改为5秒，减少连接状态检查频率
+      Timer.periodic(Duration(seconds: 5), (timer) async {
         await timerCallback();
       });
     }
