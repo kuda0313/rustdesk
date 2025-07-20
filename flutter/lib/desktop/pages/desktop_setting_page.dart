@@ -463,30 +463,37 @@ class _GeneralState extends State<_General> {
     }
 
     return _Card(title: 'Service', children: [
-      Obx(() => _Button('Install', () {
-            () async {
-              serviceBtnEnabled.value = false;
-              // 直接使用 mainGotoInstall 方法
-              //bind.mainGotoInstall();
-              bind.mainGotoSilentInstall(); //自訂模組
-              // enable the button after 1 second
-              Future.delayed(const Duration(seconds: 1), () {
-                serviceBtnEnabled.value = true;
-              });
-            }();
-          }, enabled: serviceBtnEnabled.value)),
-    
-      // 啟動/停止按鈕
-      Obx(() => _Button(serviceStop.value ? 'Start' : 'Stop', () {
-            () async {
-              serviceBtnEnabled.value = false;
-              await start_service(serviceStop.value);
-              // enable the button after 1 second
-              Future.delayed(const Duration(seconds: 1), () {
-                serviceBtnEnabled.value = true;
-              });
-            }();
-          }, enabled: serviceBtnEnabled.value))
+      Row(
+        children: [
+          Expanded(
+            child: Obx(() => _Button('Install', () {
+                  () async {
+                    serviceBtnEnabled.value = false;
+                    // 直接使用 mainGotoInstall 方法
+                    //bind.mainGotoInstall();
+                    bind.mainGotoSilentInstall(); //自訂模組
+                    // enable the button after 1 second
+                    Future.delayed(const Duration(seconds: 1), () {
+                      serviceBtnEnabled.value = true;
+                    });
+                  }();
+                }, enabled: serviceBtnEnabled.value)),
+          ),
+          SizedBox(width: 20), // 按鈕之間的間距
+          Expanded(
+            child: Obx(() => _Button(serviceStop.value ? 'Start' : 'Stop', () {
+                  () async {
+                    serviceBtnEnabled.value = false;
+                    await start_service(serviceStop.value);
+                    // enable the button after 1 second
+                    Future.delayed(const Duration(seconds: 1), () {
+                      serviceBtnEnabled.value = true;
+                    });
+                  }();
+                }, enabled: serviceBtnEnabled.value)),
+          ),
+        ],
+      ),
     ]);
   }
 
