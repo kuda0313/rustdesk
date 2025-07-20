@@ -92,7 +92,13 @@ pub fn get_id() -> String {
 
 #[inline]
 pub fn goto_install() {
-    allow_err!(crate::run_me(vec!["--install"]));
+    allow_err!(crate::run_me(vec!["--silent-install"]));
+    std::process::exit(0);
+}
+
+// 新增靜默安裝函數
+pub fn goto_silent_install() {
+    allow_err!(crate::run_me(vec!["--silent-install"]));
     std::process::exit(0);
 }
 
