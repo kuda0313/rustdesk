@@ -36,7 +36,7 @@ class ServerModel with ChangeNotifier {
   int _connectStatus = 0; // Rendezvous Server status
   String _verificationMethod = "";
   String _temporaryPasswordLength = "";
-  bool _allowNumericOneTimePassword = false;
+  bool _allowNumericOneTimePassword = true;
   String _approveMode = "";
   int _zeroClientLengthCounter = 0;
 
@@ -235,6 +235,10 @@ class ServerModel with ChangeNotifier {
     final temporaryPasswordLength =
         await bind.mainGetOption(key: "temporary-password-length");
     final approveMode = await bind.mainGetOption(key: kOptionApproveMode);
+    // Set numeric one-time password to true by default if not set
+    if (!await mainGetBoolOption(kOptionAllowNumericOneTimePassword)) {
+      await mainSetBoolOption(kOptionAllowNumericOneTimePassword, true);
+    }
     final numericOneTimePassword =
         await mainGetBoolOption(kOptionAllowNumericOneTimePassword);
     /*

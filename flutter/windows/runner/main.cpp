@@ -111,25 +111,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   flutter::DartProject project(L"data");
   // connection manager hide icon from taskbar
-  bool is_cm_page = false;
-  auto cmParam = std::string("--cm");
-  if (!command_line_arguments.empty() && command_line_arguments.front().compare(0, cmParam.size(), cmParam.c_str()) == 0) {
-    is_cm_page = true;
-  }
   bool is_install_page = false;
-  auto installParam = std::string("--install");
-  auto silentInstallParam = std::string("--silent-install");
-  if (!command_line_arguments.empty() && 
-      (command_line_arguments.front().compare(0, installParam.size(), installParam.c_str()) == 0 ||
-       command_line_arguments.front().compare(0, silentInstallParam.size(), silentInstallParam.c_str()) == 0)) {
-    // 如果是 --silent-install，直接退出不啟動 Flutter UI
-    if (command_line_arguments.front().compare(0, silentInstallParam.size(), silentInstallParam.c_str()) == 0) {
-      return EXIT_SUCCESS;
-    }
+  auto installParam = std::string("--silent-install");
+  if (!command_line_arguments.empty() && command_line_arguments.front().compare(0, installParam.size(), installParam.c_str()) == 0) {
     is_install_page = true;
   }
 
-  command_line_arguments.insert(command_line_arguments.end(), rust_args.begin(), rust_args.end());
+  bool is_cm_page = false;
+  // 在檢測 --cm 參數的地方設置為 true
+  for (const auto& arg : command_line_arguments) {
+      if (arg == "--cm") {
+          is_cm_page = true;
+          break;
+      }
+  }
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   FlutterWindow window(project);

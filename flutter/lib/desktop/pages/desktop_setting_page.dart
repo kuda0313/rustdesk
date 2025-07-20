@@ -1122,6 +1122,10 @@ class _SafetyState extends State<_Safety> with AutomaticKeepAliveClientMixin {
           final isOptFixedNumOTP =
               isOptionFixed(kOptionAllowNumericOneTimePassword);
           final isNumOPTChangable = !isOptFixedNumOTP && tmpEnabled && !locked;
+          // Ensure numeric one-time password is enabled by default
+          if (!model.allowNumericOneTimePassword && isNumOPTChangable) {
+            model.switchAllowNumericOneTimePassword();
+          }
           final numericOneTimePassword = GestureDetector(
             child: InkWell(
                 child: Row(
