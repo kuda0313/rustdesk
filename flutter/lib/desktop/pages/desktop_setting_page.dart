@@ -479,7 +479,7 @@ class _GeneralState extends State<_General> {
                   }();
                 }, enabled: serviceBtnEnabled.value)),
           ),
-          SizedBox(width: 20), // 按鈕之間的間距
+          SizedBox(width: 5), // 按鈕之間的間距
           Expanded(
             child: Obx(() => _Button(serviceStop.value ? 'Start' : 'Stop', () {
                   () async {
