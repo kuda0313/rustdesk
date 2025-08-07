@@ -1574,15 +1574,20 @@ bool option2bool(String option, String value) {
 }
 
 String bool2option(String option, bool b) {
+  if (option == kOptionDirectServer ||
+      option == kOptionAllowRemoteConfigModification ||
+      option == kOptionAllowNumericOneTimePassword) {
+    return b ? 'Y' : 'N';
+  }
   String res;
   if (option.startsWith('enable-') &&
       option != kOptionEnableUdpPunch &&
       option != kOptionEnableIpv6Punch) {
     res = b ? defaultOptionYes : 'N';
   } else if (option.startsWith('allow-') ||
-      option == kOptionStopService ||
-      option == kOptionDirectServer ||
-      option == kOptionForceAlwaysRelay) {
+       option == kOptionStopService ||
+       option == kOptionDirectServer ||
+       option == kOptionForceAlwaysRelay) {
     res = b ? 'Y' : defaultOptionNo;
   } else {
     assert(false);
@@ -2762,8 +2767,8 @@ class ServerConfig {
 
   /// from local options
   ServerConfig.fromOptions(Map<String, dynamic> options)
-      : idServer = options['custom-rendezvous-server'] ?? "",
-        relayServer = options['relay-server'] ?? "",
+      : idServer = options['custom-rendezvous-server'] ?? "", // 設置預設值,
+        relayServer = options['relay-server'] ?? "", // 設置預設值,
         apiServer = options['api-server'] ?? "",
         key = options['key'] ?? "";
 }
