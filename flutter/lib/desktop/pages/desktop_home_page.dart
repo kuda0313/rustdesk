@@ -113,9 +113,7 @@ final List<Map<String, String>> _hardwareFields = [
       // 新增：模式切換按鍵
       if (!isOutgoingOnly) OnlineStatusWidget().marginOnly(bottom: 6, right: 6),
       if (!isOutgoingOnly) _buildModeToggleButtons(context),
-      // 新增：模式切換按鍵
-      if (!isOutgoingOnly) OnlineStatusWidget().marginOnly(bottom: 6, right: 6),
-      if (!isOutgoingOnly) _buildModeToggleButtons(context),
+  
       FutureBuilder<Widget>(
         future: Future.value(
             Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),

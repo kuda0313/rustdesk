@@ -108,10 +108,16 @@ pub fn goto_install() {
 pub fn install_me(_options: String, _path: String, _silent: bool, _debug: bool) {
     #[cfg(windows)]
     std::thread::spawn(move || {
-        allow_err!(crate::platform::windows::install_me(
-            &_options, _path, _silent, _debug
-        ));
-        std::process::exit(0);
+ // 不要立即退出進程，而是啟動安裝界面
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(exe_path) = exe.to_str() {
+            // 啟動安裝界面，但不退出當前服務
+            let args = vec!["--install"];
+            if let Err(e) = crate::run_me(args) {
+                log::error!("Failed to start install UI: {}", e);
+            }
+        }
+    }
     });
 }
 
