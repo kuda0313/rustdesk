@@ -1,0 +1,72 @@
+name: Build RustDesk (Single Repo)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        target: [desktop, android]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false   # 單一倉庫，不拉子模組
+
+      # 修正 Linux/Android 腳本執行權限
+      - name: Fix script permissions
+        if: runner.os == 'Linux'
+        run: |
+          chmod +x flutter/build_android_deps.sh || true
+          chmod +x scripts/* || true
+
+      # 安裝依賴 (Linux)
+      - name: Install dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build cmake pkg-config libgtk-3-dev libappindicator3-dev librust-openssl-dev
+
+      # 安裝依賴 (Windows)
+      - name: Install dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install ninja cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          echo "VCPKG_ROOT=C:\vcpkg" >> $env:GITHUB_ENV
+          git clone https://github.com/microsoft/vcpkg C:\vcpkg
+          cd C:\vcpkg && .\bootstrap-vcpkg.bat
+
+      # 安裝 Rust
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: 1.75
+
+      # 安裝 Flutter
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.5'
+
+      # 編譯桌面版
+      - name: Build desktop
+        if: matrix.target == 'desktop'
+        run: |
+          flutter config --enable-linux-desktop
+          flutter build linux --release
+
+      # 編譯 Android
+      - name: Build Android
+        if: matrix.target == 'android'
+        run: |
+          flutter config --enable-android
+          ./flutter/build_android_deps.sh x86_64 || (echo "Android deps build failed" && exit 1)
+          flutter build apk --release
