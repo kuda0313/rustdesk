@@ -41,7 +41,7 @@ class _OnlineStatusWidgetState extends State<OnlineStatusWidget> {
   double? get height => bind.isIncomingOnly() ? null : em * 3;
 
   void onUsePublicServerGuide() {
-    const url = "https://rustdesk.com/pricing";
+    const url = "https://lee-cheng.com.tw";
     canLaunchUrlString(url).then((can) {
       if (can) {
         launchUrlString(url);
@@ -310,7 +310,7 @@ class _ConnectionPageState extends State<ConnectionPage>
                 Flexible(child: _buildRemoteIDTextField(context)),
                 SizedBox(width: 8), // 讓圖片和輸入框有間距
                 Image.asset(
-                  'assets/ktvlogo.png',
+                  'assets/logo2.png',
                   height: 128, // 可依需求調整
                 ),
               ],
@@ -343,7 +343,7 @@ class _ConnectionPageState extends State<ConnectionPage>
   /// Search for a peer.
   Widget _buildRemoteIDTextField(BuildContext context) {
     var w = Container(
-      width: 320 + 20 * 2,
+      width: 200 + 20 * 2,
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.all(Radius.circular(13)),

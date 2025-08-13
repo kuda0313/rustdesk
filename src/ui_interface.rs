@@ -92,15 +92,22 @@ pub fn get_id() -> String {
 
 #[inline]
 pub fn goto_install() {
-    // 不要立即退出進程，而是啟動安裝界面
-    if let Ok(exe) = std::env::current_exe() {
-        if let Some(exe_path) = exe.to_str() {
-            // 啟動安裝界面，但不退出當前服務
-            let args = vec!["--install"];
-            if let Err(e) = crate::run_me(args) {
-                log::error!("Failed to start install UI: {}", e);
-            }
-        }
+    // 直接調用靜默安裝，而不是跳轉到安裝頁面
+    #[cfg(windows)]
+    std::thread::spawn(move || {
+        // 使用默認安裝選項進行靜默安裝
+        let options = "startmenu desktopicon".to_string(); // 可根據需要調整
+        let path = crate::platform::windows::get_install_info().1; // 獲取默認安裝路徑
+        allow_err!(crate::platform::windows::install_me(
+            &options, path, true, false  // silent = true
+        ));
+        std::process::exit(0);
+    });
+    
+    #[cfg(not(windows))]
+    {
+        allow_err!(crate::run_me(vec!["--install"]));
+        std::process::exit(0);
     }
 }
 
