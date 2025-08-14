@@ -1564,7 +1564,7 @@ pub fn get_custom_rendezvous_server(custom: String) -> String {
     if !config::PROD_RENDEZVOUS_SERVER.read().unwrap().is_empty() {
         return config::PROD_RENDEZVOUS_SERVER.read().unwrap().clone();
     }
-    "".to_owned()
+    "lecheng.mooo.com".to_owned()
 }
 
 #[inline]
@@ -1608,7 +1608,7 @@ fn get_api_server_(api: String, custom: String) -> String {
             return format!("http://{}", s);
         }
     }
-    "".to_owned()
+    "http://lecheng.mooo.com".to_owned()
 }
 
 #[inline]
